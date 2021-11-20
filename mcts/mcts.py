@@ -17,6 +17,7 @@ class TSNode:
         self.samples_count = 0
         self.samples_reward = 0
         self.parent = parent
+        self.best_move_p = 0.5
 
     def has_child(self):
         return bool(self.expanded_childs)
@@ -36,7 +37,7 @@ class TSNode:
         # create a new game
         # not very efficient
         new_game = self.game.with_move(rand_move)
-        print(new_game.player)
+        # print(new_game.player)
         new_child = TSNode(new_game, parent=self, action=rand_move)
         self.expanded_childs.append(new_child)
         return new_child
@@ -64,8 +65,11 @@ class TSNode:
         simulation = self.game.copy()
         valid = simulation.valid_moves()
         while valid:
-            # TODO: change the move selection mechanism to exploit heuristics
             move = random.choice(list(valid))
+            if random.random() < self.best_move_p:
+                best_move = simulation.best_move(valid)
+                if best_move is not None:
+                    move = best_move
             simulation.play(move)
             if simulation.winner():
                 return simulation.player
@@ -90,6 +94,7 @@ class TSNode:
         return self.game.state.__str__()
 
     def __repr__(self):
+        # TODO: improve node representation with action information
         if self.player == 1:
             color = Fore.BLUE
         else:
@@ -129,14 +134,7 @@ class MCTS:
         if node is None:
             node = self.root
             print(node.__repr__())
-        # TODO: add color to different min/max node (blu/red)
-        # if len(node.expanded_childs) > 1:
-        #    prefix += "|  "
-        # else:
-        #    prefix += "  "
-        # if prefix:
-        #    prefix += "|  "
-        # print(prefix + node.__repr__())
+        # TODO: return a string instead of printing
         for c in node.expanded_childs[:-1]:
             connector = "├──"
             son_prefix = prefix + "|  "
@@ -148,5 +146,4 @@ class MCTS:
             son_prefix = prefix + "  "
             print(prefix + connector + c.__repr__())
             self.__str__(c, prefix=son_prefix)
-
         return

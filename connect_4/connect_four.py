@@ -70,6 +70,13 @@ class Connect4:
             )
         )
 
+    def best_move(self, moves):
+        for m in moves:
+            outcome = self.with_move(m)
+            if outcome.winner():
+                return m
+        return None
+
     def with_move(self, move):
         """Return a new game instance where `move` has been played by the current
         player"""
