@@ -1,4 +1,5 @@
 import numpy as np
+from colorama import Fore, Style
 
 NUM_COLUMNS = 7
 COLUMN_HEIGHT = 6
@@ -89,3 +90,13 @@ class Connect4:
 
     def winner(self):
         return self.four_in_a_row(self.player)
+
+    def __str__(self):
+        return (
+            str(np.flip(self.state.T, 0))
+            .replace("[", " ")
+            .replace("]", "")
+            .replace("0", "_")
+            .replace("-1", Fore.YELLOW + " O" + Style.RESET_ALL)
+            .replace("1", Fore.RED + "X" + Style.RESET_ALL)
+        )
