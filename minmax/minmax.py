@@ -12,7 +12,11 @@ class MinMax:
         self.max_depth = max_depth
         self.mc_samples = mc_samples
 
-    def search(self, game=None, alpha=MIN_VAL, beta=MAX_VAL, depth=None):
+    def search(self):
+        move, val = self._search()
+        return move
+
+    def _search(self, game=None, alpha=MIN_VAL, beta=MAX_VAL, depth=None):
 
         if game is None:
             game = self.game
@@ -34,13 +38,15 @@ class MinMax:
             return mandatory_move, -game.player
         val = self.MIN_VAL
         move = None
+        evals = list()
         for m in valid_moves:
-            _, child_val = self.search(game.with_move(m), -beta, -alpha, depth - 1)
+            _, child_val = self._search(game.with_move(m), -beta, -alpha, depth - 1)
             val = max(val, -child_val)
+            evals.append((m, val))
             alpha = max(alpha, val)
             if alpha >= beta:
-                move = m
                 break
+        move = max(evals, key=lambda k: k[1])[0]
         return move, val
 
     def mc_eval(self, game):
