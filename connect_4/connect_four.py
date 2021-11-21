@@ -17,9 +17,7 @@ class Connect4:
 
     def valid_moves(self):
         """Returns columns where a disc may be played"""
-        return set(
-            [n for n in range(NUM_COLUMNS) if self.state[n, COLUMN_HEIGHT - 1] == 0]
-        )
+        return [n for n in range(NUM_COLUMNS) if self.state[n, COLUMN_HEIGHT - 1] == 0]
 
     def play(self, column):
         """Updates `state` as `player` drops a disc in `column`"""
@@ -71,10 +69,15 @@ class Connect4:
             )
         )
 
-    def best_move(self, moves):
+    def best_move(self, moves, player=None):
+        g = self.copy()
+        if player is not None:
+            g.player = player
+        else:
+            player = g.player
         for m in moves:
-            outcome = self.with_move(m)
-            if outcome.winner():
+            outcome = g.with_move(m)
+            if outcome.four_in_a_row(player):
                 return m
         return None
 
@@ -82,14 +85,17 @@ class Connect4:
         """Return a new game instance where `move` has been played by the current
         player"""
         new_game = Connect4(np.copy(self.state))
+        new_game.player = self.player
         new_game.play(move)
         return new_game
 
     def copy(self):
         return Connect4(np.copy(self.state))
 
-    def winner(self):
-        return self.four_in_a_row(self.player)
+    def winner(self, player=None):
+        if player is None:
+            player = self.player
+        return self.four_in_a_row(player)
 
     def __str__(self):
         return (

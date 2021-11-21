@@ -11,7 +11,7 @@ class TSNode:
         self.game = game
         self.state = game.state
         self.action = action
-        self.not_expanded_actions = game.valid_moves()  # return a set
+        self.not_expanded_actions = game.valid_moves()
         self.expanded_childs = list()
         self.player = game.player
         self.samples_count = 0
@@ -65,7 +65,7 @@ class TSNode:
         simulation = self.game.copy()
         valid = simulation.valid_moves()
         while valid:
-            move = random.choice(list(valid))
+            move = random.choice(valid)
             if random.random() < self.best_move_p:
                 best_move = simulation.best_move(valid)
                 if best_move is not None:
@@ -74,7 +74,7 @@ class TSNode:
             if simulation.winner():
                 return simulation.player
             valid = simulation.valid_moves()
-        return 0
+        return 0  # draw
 
     def monte_carlo(self, samples=100):
         tot_outcomes = 0
@@ -119,7 +119,7 @@ class MCTS:
             sel_node = self.select_node()
             tot_outcome, samples = sel_node.monte_carlo(self.samples)
             sel_node.back_prop(tot_outcome, samples)
-        return self.root.best_child()
+        return self.root.best_child().action
 
     def select_node(self):
         """Add DOC"""
