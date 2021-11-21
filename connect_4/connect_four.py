@@ -97,6 +97,13 @@ class Connect4:
             player = self.player
         return self.four_in_a_row(player)
 
+    def is_finished(self):
+        return (
+            np.sum(self.state != 0) == self.state.size
+            or self.winner()
+            or self.winner(-self.player)
+        )
+
     def __str__(self):
         return (
             str(np.flip(self.state.T, 0))

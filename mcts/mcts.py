@@ -66,10 +66,10 @@ class TSNode:
         valid = simulation.valid_moves()
         while valid:
             move = random.choice(valid)
-            if random.random() < self.best_move_p:
-                best_move = simulation.best_move(valid)
-                if best_move is not None:
-                    move = best_move
+            # if random.random() < self.best_move_p:
+            #    best_move = simulation.best_move(valid)
+            #    if best_move is not None:
+            #        move = best_move
             simulation.play(move)
             if simulation.winner():
                 return simulation.player
@@ -110,6 +110,7 @@ class TSNode:
 
 class MCTS:
     def __init__(self, game, iters=1000, samples=300):
+        self.game = game
         self.root = TSNode(game)
         self.iters = iters
         self.samples = samples
